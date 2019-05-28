@@ -1,0 +1,27 @@
+---
+name: create_svi
+pack: netorchestration-st2-demo
+description: Create svi on device
+enabled: true
+
+trigger:
+  type: core.st2.webhook
+  parameters:
+    url: "create-svi"
+
+criteria:
+  trigger.body.data.interface.name:
+    type: "startswith"
+    pattern: "vl"
+  trigger.body.data.vrf:
+    type: "exists"
+    pattern: "name"
+
+action:
+  ref: netorchestration-st2-demo.svi-workflow
+  parameters:
+    device_name: "{{ trigger.body.data.interface.device.name }}"
+    int_name: "{{ trigger.body.data.interface.name }}"
+    vrf_name: "{{ trigger.body.data.vrf.name | replace(' ', '_') }}"
+    ip: "{%- set ip_address = trigger.body.data.address.split('/') %} {{ ip_address[0] }}"
+    mask: "{%- set ip_address = trigger.body.data.address.split('/') %} {%- set mask = {24:'255.255.255.0', 32:'255.255.255.255'} %} {{ mask[ip_address[1]|int] }}"

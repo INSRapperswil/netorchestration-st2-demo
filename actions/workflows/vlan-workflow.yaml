@@ -1,0 +1,37 @@
+version: 1.0
+
+description: VLAN workflow
+
+input:
+- site_id
+- vlan_id
+- vlan_name
+- username
+- password
+
+tasks:
+  get_devices:
+    action: netbox.get.dcim.devices
+    input:
+      site_id: "{{ ctx().site_id }}"
+    next:
+      - when: "{{ succeeded() }}"
+        do:
+          - restconf_add_vlan
+        publish:
+          - devices: "{{ result().result.raw.results }}"
+
+
+  restconf_add_vlan:
+    action: core.http
+    with:
+      items: "{{ ctx().devices }}"
+    input:
+      url: "https://{{ item().display_name }}.lab.ins.hsr.ch/restconf/data/Cisco-IOS-XE-native:native/vlan/vlan-list/"
+      body: '{"vlan-list":{ "id": "{{ ctx().vlan_id }}", "name": "{{ ctx().vlan_name }}"} }'
+      headers:
+        Content-Type: "application/yang-data+json"
+      method: PATCH
+      verify_ssl_cert: false
+      username: "{{ ctx().username }}"
+      password: "{{ ctx().password }}"

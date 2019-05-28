@@ -1,0 +1,47 @@
+version: 1.0
+    
+description: VRF workflow
+    
+input:
+- role
+- vrf_name
+- rd
+- rt
+    
+tasks:
+  get_pe_routers:
+    action: netbox.get.dcim.devices
+    input:
+      role: "{{ ctx().role }}"
+    next:
+      - when: "{{ succeeded() }}"
+        do:
+          - write_config
+        publish:
+          - pe_routers: "{{ result().result.raw.results }}"
+        
+  write_config:
+    action: napalm.loadconfig
+    with:
+      items: "{{ ctx().pe_routers }}"
+    input:
+      inline_transfer: yes
+      hostname: "{{ item().display_name + '.lab.ins.hsr.ch' }}"
+      config_text: |
+        vrf definition {{ ctx().vrf_name }}
+         {% if item().primary_ip4 is not none %}
+         rd {{ item().primary_ip4.address.split('/') | first }}:{{ ctx().rd }}
+         {% else %}
+         rd 0.0.0.0:{{ ctx().rd }}
+         {% endif %}
+         route-target export {{ ctx().rt }}
+         route-target import {{ ctx().rt }}
+        !
+        address-family ipv4
+         exit-address-family
+        !
+        router bgp 65000
+        address-family ipv4 vrf {{ ctx().vrf_name }}
+         redistribute connected
+         exit-address-family
+        !

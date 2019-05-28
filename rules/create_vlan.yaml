@@ -1,0 +1,17 @@
+---
+name: create_vlan
+pack: netorchestration-st2-demo
+description: Create vlan on devices
+enabled: true
+
+trigger:
+  type: core.st2.webhook
+  parameters:
+    url: "create-vlan"
+
+action:
+  ref: netorchestration-st2-demo.vlan-workflow
+  parameters:
+    site_id: "{{ trigger.body.data.site.id }}"
+    vlan_id: "{{ trigger.body.data.vid }}"
+    vlan_name: "{{ trigger.body.data.name }}"

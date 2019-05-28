@@ -1,0 +1,7 @@
+---
+name: netorchestration-st2-demo
+ref: netorchdemo
+description: Pack to demonstrate network automation workflows. `napalm` and `netbox` pack must be installed.
+version: 3.0.0
+author: Institute for Networked Solutions, HSR
+email: "info@ins.hsr.ch"

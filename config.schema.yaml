@@ -1,0 +1,9 @@
+---
+username:
+  description: "Basic authentication user for HTTPS / restconf"
+  type: "string"
+  required: true
+password:
+  description: "Basic authentication password for HTTPS / restconf"
+  type: "string"
+  required: true

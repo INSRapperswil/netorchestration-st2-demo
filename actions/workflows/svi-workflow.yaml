@@ -1,0 +1,22 @@
+version: 1.0
+
+description: SVI workflow
+
+input:
+- device_name
+- int_name
+- vrf_name
+- ip
+- mask
+
+tasks:
+  write_config:
+    action: napalm.loadconfig
+    input:
+      inline_transfer: yes
+      hostname: "{{ ctx().device_name + '.lab.ins.hsr.ch' }}"
+      config_text: |
+        interface {{ ctx().int_name }}
+         vrf forwarding {{ ctx().vrf_name }}
+         ip address {{ ctx().ip }} {{ ctx().mask }}
+        !

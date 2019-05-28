@@ -1,0 +1,20 @@
+---
+name: vrf-workflow
+pack: netorchestration-st2-demo 
+description: VRF workflow
+runner_type: orquesta
+entry_point: workflows/vrf-workflow.yaml
+enabled: true
+parameters:
+  role:
+    required: false
+    type: string
+  vrf_name:
+    required: true
+    type: string
+  rd:
+    required: true
+    type: string
+  rt:
+    required: true
+    type: string

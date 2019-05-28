@@ -1,0 +1,23 @@
+---
+name: svi-workflow
+pack: netorchestration-st2-demo
+description: svi workflow
+runner_type: orquesta
+entry_point: workflows/svi-workflow.yaml
+enabled: true
+parameters:
+  device_name:
+    required: true
+    type: string
+  int_name:
+    required: true
+    type: string
+  vrf_name:
+    required: true
+    type: string
+  ip:
+    required: true
+    type: string
+  mask:
+    required: true
+    type: string
